@@ -1,0 +1,94 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// t1
+model clientes {
+  idcliente    BigInt   @id @default(autoincrement())
+  dtregistro   DateTime @default(now())
+  nmcliente    String   @db.VarChar(60)
+  emailcliente String   @db.VarChar(60)
+  senhacliente String   @db.VarChar(60)
+}
+
+// t2
+model enderecoscliente {
+  idenderecocliente BigInt  @id @default(autoincrement())
+  idcliente         BigInt
+  cep               String  @db.VarChar(8)
+  bairro            String  @db.VarChar(60)
+  logradouro        String  @db.VarChar(60)
+  numero            String? @db.VarChar(60)
+  complemento       String? @db.VarChar(60)
+  cidadecliente     String  @db.VarChar(60)
+  ufcliente         String  @db.VarChar(2)
+}
+
+// t3
+model prestadores {
+  idprestador      BigInt   @id @default(autoincrement())
+  dtregistro       DateTime @default(now())
+  nmprestador      String   @db.VarChar(60)
+  cpfprestador     String   @db.VarChar(11)
+  senhaprestador   String   @db.VarChar(60)
+  cidadeprestador  String   @db.VarChar(60)
+  ufprestador      String   @db.VarChar(2)
+  celularprestador String?  @db.VarChar(20)
+  emailprestador   String?  @db.VarChar(60)
+  whatsapp         Boolean  @default(false)
+}
+
+// t4
+// tipocargahoraria: 1 - Horário Fixo | 2 - Período
+model servicos {
+  idservico        BigInt  @id @default(autoincrement())
+  nmservico        String  @db.VarChar(60)
+  tipocargahoraria Int     @default(1)
+  observacao       String? @db.VarChar(160)
+}
+
+// t5
+model servicosprestadores {
+  idservicoprestador BigInt @id @default(autoincrement())
+  idservico          BigInt
+  idprestador        BigInt
+}
+
+// t6
+// situacao: 1 - Pendente | 2 - Confirmado | 3 - Cancelado | 4 - Negado
+model servicosagendados {
+  idservicoagendado BigInt   @id @default(autoincrement())
+  idservico         BigInt
+  idprestador       BigInt
+  idcliente         BigInt
+  dtregistro        DateTime @default(now())
+  dtprevisto        DateTime @db.Date
+  horainicio        String   @db.VarChar(5)
+  horafim           String?  @db.VarChar(5)
+  situacao          Int
+}
+
+// t7
+model agendaprestador {
+  idagendaprestador BigInt   @id @default(autoincrement())
+  idprestador       BigInt
+  idservicoagendado BigInt?
+  dtregistro        DateTime @default(now())
+  dtprevisto        DateTime @db.Date
+  horainicio        String   @db.VarChar(5)
+  horafim           String?  @db.VarChar(5)
+}
+
+// t8
+model avaliacoescliente {
+  idavaliacaocliente BigInt   @id @default(autoincrement())
+  idservicoagendado  BigInt
+  dtregistro         DateTime @default(now())
+  nota               Int
+}

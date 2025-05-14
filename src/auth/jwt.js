@@ -2,7 +2,7 @@ import pkg from 'jsonwebtoken'
 const { sign } = pkg
 
 // mude o valor abaixo para uma chave secreta mais segura
-export const secretKey = 'MySecret'
+export const secretKey = 'C4s4MAnt3m2025'
 
 /**
  *  essa função cria um token para o usuário utilizando o id do usuário apenas modifique para seu uso
