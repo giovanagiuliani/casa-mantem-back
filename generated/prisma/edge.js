@@ -204,7 +204,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "C:\\UFSM\\projeto-integrador\\casa-mantem-back\\generated\\prisma",
+      "value": "C:\\UFSM\\Projeto Integrador\\casa-mantem-back\\generated\\prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -218,12 +218,11 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "C:\\UFSM\\projeto-integrador\\casa-mantem-back\\prisma\\schema.prisma",
+    "sourceFilePath": "C:\\UFSM\\Projeto Integrador\\casa-mantem-back\\prisma\\schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": null,
-    "schemaEnvPath": "../../.env"
+    "rootEnvPath": null
   },
   "relativePath": "../../prisma",
   "clientVersion": "6.7.0",
