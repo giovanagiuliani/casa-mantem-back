@@ -2,7 +2,9 @@ import express from 'express'
 import cors from 'cors'
 import helmet from 'helmet'
 import whitelist from './whitelist.js'
+import './bigIntExtension.js'
 import clientesRouter from './clientes/rotasClientes.js'
+import prestadoresRouter from './prestadores/rotasPrestadores.js'
 
 import { appRouter } from './http/routes.js'
 
@@ -26,5 +28,6 @@ app.use(helmet())
 app.use(cors(corsOptions))
 
 app.use('/clientes', clientesRouter)
+app.use('/prestadores', prestadoresRouter)
 
 appRouter(app)

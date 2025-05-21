@@ -42,7 +42,7 @@ export const cliente = {
       if (!senhaCorreta) return null
 
       const dadosToken = {
-        idcliente: cliente.idcliente
+        iduser: cliente.idcliente
       }
 
       const token = createToken(dadosToken)
@@ -52,6 +52,116 @@ export const cliente = {
     } catch (error) {
       console.error('Erro ao logar cliente:', error)
       throw new Error('Erro ao logar cliente')
+    }
+  },
+
+  async buscaDadosCliente (dados) {
+    try {
+      const retorno = await prisma.clientes.findFirst({
+        where: {
+          idcliente: dados.idcliente
+        },
+        select: {
+          emailcliente: true,
+          nmcliente: true
+        }
+      })
+
+      return retorno
+    } catch (error) {
+      console.error('Erro ao buscar dados do cliente:', error)
+      throw new Error('Erro ao buscar dados do cliente')
+    }
+  },
+
+  async buscaEnderecosCliente (dados) {
+    try {
+      const retorno = await prisma.enderecoscliente.findMany({
+        where: {
+          idcliente: dados.idcliente
+        }
+      })
+
+      return retorno
+    } catch (error) {
+      console.error('Erro ao buscar endereços do cliente:', error)
+      throw new Error('Erro ao buscar endereços do cliente')
+    }
+  },
+
+  async cadastrarEnderecoCliente (dados) {
+    try {
+      const retorno = await prisma.enderecoscliente.create({
+        data: {
+          cep: dados.cep,
+          bairro: dados.bairro,
+          cidadecliente: dados.cidadecliente,
+          idcliente: dados.idcliente,
+          logradouro: dados.logradouro,
+          ufcliente: dados.ufcliente,
+          complemento: dados.complemento,
+          numero: dados.numero
+        }
+      })
+
+      return retorno
+    } catch (error) {
+      console.error('Erro ao cadastrar endereço do cliente:', error)
+      throw new Error('Erro ao cadastrar endereço do cliente')
+    }
+  },
+
+  async excluirEnderecoCliente (dados) {
+    try {
+      const retorno = await prisma.enderecoscliente.delete({
+        where: {
+          idenderecocliente: dados.idenderecocliente
+        }
+      })
+
+      return retorno
+    } catch (error) {
+      console.error('Erro ao excluir endereço do cliente:', error)
+      throw new Error('Erro ao excluir endereço do cliente')
+    }
+  },
+
+  async buscaDadosEndereco (dados) {
+    try {
+      const retorno = await prisma.enderecoscliente.findFirst({
+        where: {
+          idenderecocliente: dados.idenderecocliente
+        }
+      })
+
+      return retorno
+    } catch (error) {
+      console.error('Erro ao buscar dados de endereço endereço do cliente:', error)
+      throw new Error('Erro ao buscar dados de endereço endereço do cliente')
+    }
+  },
+
+  async atualizarEnderecoCliente (dados) {
+    try {
+      const retorno = await prisma.enderecoscliente.update({
+        where: {
+          idenderecocliente: dados.idenderecocliente
+        },
+        data: {
+          bairro: dados.bairro,
+          cep: dados.cep,
+          cidadecliente: dados.cidadecliente,
+          complemento: dados.complemento,
+          logradouro: dados.logradouro,
+          numero: dados.numero,
+          ufcliente: dados.ufcliente
+        }
+      })
+
+      return retorno
+    } catch (error) {
+      console.error('Erro ao buscar dados de endereço endereço do cliente:', error)
+      throw new Error('Erro ao buscar dados de endereço endereço do cliente')
     }
   }
 }
