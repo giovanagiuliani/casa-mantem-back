@@ -103,4 +103,30 @@ router.post('/atualizarEnderecoCliente', verifyToken, async (req, res) => {
   }
 })
 
+router.post('/alterarSenhaCliente', verifyToken, async (req, res) => {
+  try {
+    const dados = req.body
+    dados.idcliente = req.decodedToken.sub
+    const retorno = await cliente.alterarSenhaCliente(dados)
+
+    res.status(200).json(retorno)
+  } catch (error) {
+    console.error('Erro ao alterar senha do cliente:', error)
+    res.status(500).json({ message: 'Erro ao alterar senha do cliente.' })
+  }
+})
+
+router.post('/atualizarDadosCliente', verifyToken, async (req, res) => {
+  try {
+    const dados = req.body
+    dados.idcliente = req.decodedToken.sub
+    const retorno = await cliente.atualizarDadosCliente(dados)
+
+    res.status(200).json(retorno)
+  } catch (error) {
+    console.error('Erro ao atualizar dados do cliente:', error)
+    res.status(500).json({ message: 'Erro ao atualizar dados do cliente.' })
+  }
+})
+
 export default router

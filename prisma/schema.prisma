@@ -13,6 +13,7 @@ model clientes {
   dtregistro   DateTime @default(now())
   nmcliente    String   @db.VarChar(60)
   emailcliente String   @db.VarChar(60)
+  fotocliente  String?  @db.Text
   senhacliente String   @db.VarChar(60)
 }
 
@@ -35,6 +36,7 @@ model prestadores {
   dtregistro       DateTime @default(now())
   nmprestador      String   @db.VarChar(60)
   cpfprestador     String   @db.VarChar(11)
+  fotoprestador    String?  @db.Text
   senhaprestador   String   @db.VarChar(60)
   cidadeprestador  String   @db.VarChar(60)
   ufprestador      String   @db.VarChar(2)
@@ -44,19 +46,19 @@ model prestadores {
 }
 
 // t4
-// tipocargahoraria: 1 - Horário Fixo | 2 - Período
 model servicos {
-  idservico        BigInt  @id @default(autoincrement())
-  nmservico        String  @db.VarChar(60)
-  tipocargahoraria Int     @default(1)
-  observacao       String? @db.VarChar(160)
+  idservico BigInt @id @default(autoincrement())
+  nmservico String @db.VarChar(60)
 }
 
 // t5
+// tipocargahoraria: 1 - Horário Fixo | 2 - Período
 model servicosprestadores {
-  idservicoprestador BigInt @id @default(autoincrement())
+  idservicoprestador BigInt  @id @default(autoincrement())
   idservico          BigInt
   idprestador        BigInt
+  observacao         String? @db.VarChar(160)
+  tipocargahoraria   Int     @default(1)
 }
 
 // t6

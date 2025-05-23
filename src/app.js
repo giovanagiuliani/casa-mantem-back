@@ -5,6 +5,7 @@ import whitelist from './whitelist.js'
 import './bigIntExtension.js'
 import clientesRouter from './clientes/rotasClientes.js'
 import prestadoresRouter from './prestadores/rotasPrestadores.js'
+import servicosRouter from './servicos/rotasServicos.js'
 
 import { appRouter } from './http/routes.js'
 
@@ -29,5 +30,6 @@ app.use(cors(corsOptions))
 
 app.use('/clientes', clientesRouter)
 app.use('/prestadores', prestadoresRouter)
+app.use('/servicos', servicosRouter)
 
 appRouter(app)

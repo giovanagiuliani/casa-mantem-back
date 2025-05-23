@@ -6,13 +6,13 @@ const saltRounds = 10
 export const cliente = {
   async cadastrarCliente (dados) {
     try {
-      const hash = await bcrypt.hash(dados.senhacliente, saltRounds)
+      const hashsenha = await bcrypt.hash(dados.senhacliente, saltRounds)
 
       const retorno = await prisma.clientes.create({
         data: {
           nmcliente: dados.nmcliente,
           emailcliente: dados.emailcliente,
-          senhacliente: hash
+          senhacliente: hashsenha
         }
       })
 
@@ -48,7 +48,7 @@ export const cliente = {
       const token = createToken(dadosToken)
       const nome = cliente.nmcliente.split(' ')
 
-      return { token, nmcliente: nome[0] }
+      return { token, nmcliente: nome[0], tipologin: 1 }
     } catch (error) {
       console.error('Erro ao logar cliente:', error)
       throw new Error('Erro ao logar cliente')
@@ -136,8 +136,8 @@ export const cliente = {
 
       return retorno
     } catch (error) {
-      console.error('Erro ao buscar dados de endereço endereço do cliente:', error)
-      throw new Error('Erro ao buscar dados de endereço endereço do cliente')
+      console.error('Erro ao buscar dados de endereço do cliente:', error)
+      throw new Error('Erro ao buscar dados de endereço do cliente')
     }
   },
 
@@ -160,8 +160,46 @@ export const cliente = {
 
       return retorno
     } catch (error) {
-      console.error('Erro ao buscar dados de endereço endereço do cliente:', error)
-      throw new Error('Erro ao buscar dados de endereço endereço do cliente')
+      console.error('Erro ao atualizar endereço do cliente:', error)
+      throw new Error('Erro ao atualizar endereço do cliente')
+    }
+  },
+
+  async alterarSenhaCliente (dados) {
+    try {
+      const hashsenha = await bcrypt.hash(dados.novaSenha, saltRounds)
+      const retorno = await prisma.clientes.update({
+        where: {
+          idcliente: dados.idcliente
+        },
+        data: {
+          senhacliente: hashsenha
+        }
+      })
+
+      return retorno
+    } catch (error) {
+      console.error('Erro ao alterar senha do cliente:', error)
+      throw new Error('Erro ao alterar senha do cliente')
+    }
+  },
+
+  async atualizarDadosCliente (dados) {
+    try {
+      const retorno = await prisma.clientes.update({
+        where: {
+          idcliente: dados.idcliente
+        },
+        data: {
+          nmcliente: dados.nmcliente,
+          emailcliente: dados.emailcliente
+        }
+      })
+
+      return retorno
+    } catch (error) {
+      console.error('Erro ao atualizar dados do cliente:', error)
+      throw new Error('Erro ao atualizar dados do cliente')
     }
   }
 }
