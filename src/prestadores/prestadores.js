@@ -100,5 +100,29 @@ export const prestador = {
       console.error('Erro ao alterar senha do prestador:', error)
       throw new Error('Erro ao alterar senha do prestador')
     }
+  },
+
+  async atualizarDadosPrestador (dados) {
+    try {
+      const retorno = await prisma.prestadores.update({
+        where: {
+          idprestador: dados.idprestador
+        },
+        data: {
+          celularprestador: dados.celularprestador,
+          cidadeprestador: dados.cidadeprestador,
+          cpfprestador: dados.cpfprestador,
+          emailprestador: dados.emailprestador,
+          nmprestador: dados.nmprestador,
+          ufprestador: dados.ufprestador,
+          whatsapp: dados.whatsapp
+        }
+      })
+
+      return retorno
+    } catch (error) {
+      console.error('Erro ao atualizar dados do prestador:', error)
+      throw new Error('Erro ao atualizar dados do prestador')
+    }
   }
 }
