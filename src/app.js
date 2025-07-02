@@ -6,6 +6,7 @@ import './bigIntExtension.js'
 import clientesRouter from './clientes/rotasClientes.js'
 import prestadoresRouter from './prestadores/rotasPrestadores.js'
 import servicosRouter from './servicos/rotasServicos.js'
+import horariosRouter from './horarios/rotasHorarios.js'
 
 import { appRouter } from './http/routes.js'
 
@@ -31,5 +32,6 @@ app.use(cors(corsOptions))
 app.use('/clientes', clientesRouter)
 app.use('/prestadores', prestadoresRouter)
 app.use('/servicos', servicosRouter)
+app.use('/horarios', horariosRouter)
 
 appRouter(app)

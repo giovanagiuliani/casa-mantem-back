@@ -70,8 +70,8 @@ model servicosagendados {
   idcliente         BigInt
   dtregistro        DateTime @default(now())
   dtprevisto        DateTime @db.Date
-  horainicio        String   @db.VarChar(5)
-  horafim           String?  @db.VarChar(5)
+  horainicio        String   @db.VarChar(10)
+  horafim           String?  @db.VarChar(10)
   situacao          Int
 }
 
@@ -92,4 +92,21 @@ model avaliacoescliente {
   idservicoagendado  BigInt
   dtregistro         DateTime @default(now())
   nota               Int
+}
+
+// t9
+model horariosprestador {
+  idhorarioprestador BigInt  @id @default(autoincrement())
+  idprestador        BigInt
+  diadesemana        Boolean @default(false)
+  sabado             Boolean @default(false)
+  domingoferiado     Boolean @default(false)
+  horarios           Json    @db.JsonB
+}
+
+// t10
+model favoritoscliente {
+  idfavoritocliente BigInt @id @default(autoincrement())
+  idprestador       BigInt
+  idcliente         BigInt
 }

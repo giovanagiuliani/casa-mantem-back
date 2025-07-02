@@ -32,7 +32,9 @@ router.post('/loginPrestador', async (req, res) => {
 router.post('/buscaDadosPrestador', verifyToken, async (req, res) => {
   try {
     const dados = req.body
-    dados.idprestador = req.decodedToken.sub
+    if (!dados.idprestador) {
+      dados.idprestador = req.decodedToken.sub
+    }
     const retorno = await prestador.buscaDadosPrestador(dados)
 
     res.status(200).json(retorno)
@@ -88,6 +90,18 @@ router.post('/buscaCidades', async (req, res) => {
   } catch (error) {
     console.error('Erro ao buscar unidades federativas:', error)
     res.status(500).json({ message: 'Erro ao buscar unidades federativas.' })
+  }
+})
+
+router.post('/buscaPrestadoresLocal', async (req, res) => {
+  try {
+    const dados = req.body
+    const retorno = await prestador.buscaPrestadoresLocal(dados)
+
+    res.status(200).json(retorno)
+  } catch (error) {
+    console.error('Erro ao buscar prestadores da localidade:', error)
+    res.status(500).json({ message: 'Erro ao buscar prestadores da localidade.' })
   }
 })
 

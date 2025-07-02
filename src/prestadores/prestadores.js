@@ -124,5 +124,26 @@ export const prestador = {
       console.error('Erro ao atualizar dados do prestador:', error)
       throw new Error('Erro ao atualizar dados do prestador')
     }
+  },
+
+  async buscaPrestadoresLocal (dados) {
+    try {
+      const retorno = await prisma.$queryRaw`
+      select t3.idprestador, t3.nmprestador, t3.cidadeprestador, t3.ufprestador, t3.fotoprestador, 
+      json_agg(json_build_object('idservico', t4.idservico, 'nmservico', t4.nmservico)) AS servicos
+      from prestadores t3
+      inner join servicosprestadores t5 on (t5.idprestador = t3.idprestador)
+      inner join servicos t4 on (t5.idservico = t4.idservico)
+      where t3.cidadeprestador = ${dados.cidade}
+      and t3.ufprestador = ${dados.uf}
+      and (${dados.idservico}::int IS NULL OR t5.idservico = ${dados.idservico})
+      group by t3.idprestador, t3.nmprestador, t3.cidadeprestador, t3.ufprestador, t3.fotoprestador
+      `
+
+      return retorno
+    } catch (error) {
+      console.error('Erro ao buscar prestadores da localidade:', error)
+      throw new Error('Erro ao buscar prestadores da localidade')
+    }
   }
 }

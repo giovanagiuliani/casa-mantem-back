@@ -129,4 +129,30 @@ router.post('/atualizarDadosCliente', verifyToken, async (req, res) => {
   }
 })
 
+router.post('/favDesfavPrestador', verifyToken, async (req, res) => {
+  try {
+    const dados = req.body
+    dados.idcliente = req.decodedToken.sub
+    const retorno = await cliente.favDesfavPrestador(dados)
+
+    res.status(200).json(retorno)
+  } catch (error) {
+    console.error('Erro ao favoritar/desfavoritar prestador:', error)
+    res.status(500).json({ message: 'Erro ao favoritar/desfavoritar prestador.' })
+  }
+})
+
+router.post('/buscaPrestadoresFavoritos', verifyToken, async (req, res) => {
+  try {
+    const dados = req.body
+    dados.idcliente = req.decodedToken.sub
+    const retorno = await cliente.buscaPrestadoresFavoritos(dados)
+
+    res.status(200).json(retorno)
+  } catch (error) {
+    console.error('Erro ao busca lista de prestadores favoritos:', error)
+    res.status(500).json({ message: 'Erro ao busca lista de prestadores favoritos.' })
+  }
+})
+
 export default router

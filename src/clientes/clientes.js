@@ -201,5 +201,58 @@ export const cliente = {
       console.error('Erro ao atualizar dados do cliente:', error)
       throw new Error('Erro ao atualizar dados do cliente')
     }
+  },
+
+  async favDesfavPrestador (dados) {
+    try {
+      let retorno
+      const fav = await prisma.favoritoscliente.findFirst({
+        where: {
+          idprestador: dados.idprestador,
+          idcliente: dados.idcliente
+        }
+      })
+
+      if (fav) {
+        retorno = await prisma.favoritoscliente.delete({
+          where: {
+            idfavoritocliente: fav.idfavoritocliente
+          }
+        })
+      } else {
+        retorno = await prisma.favoritoscliente.create({
+          data: {
+            idcliente: dados.idcliente,
+            idprestador: dados.idprestador
+          }
+        })
+      }
+
+      return retorno
+    } catch (error) {
+      console.error('Erro ao favoritar/desfavoritar prestador:', error)
+      throw new Error('Erro ao favoritar/desfavoritar prestador')
+    }
+  },
+
+  async buscaPrestadoresFavoritos (dados) {
+    try {
+      const retorno = await prisma.$queryRaw`
+      select t3.nmprestador, t3.celularprestador, t3.emailprestador, t3.fotoprestador, t3.cidadeprestador, t3.ufprestador, 
+      t3.whatsapp, t3.idprestador, t10.idcliente, t10.idfavoritocliente,
+      exists (
+        select 1 from favoritoscliente t10 
+        where t10.idprestador = t3.idprestador and t10.idcliente = ${dados.idcliente}
+      ) as favorito
+      from favoritoscliente t10
+      inner join prestadores t3 on (t3.idprestador = t10.idprestador)
+      where t10.idcliente = ${dados.idcliente}
+      `
+
+      return retorno
+    } catch (error) {
+      console.error('Erro ao buscar lista de prestadores favoritos:', error)
+      throw new Error('Erro ao buscar lista de prestadores favoritos')
+    }
   }
 }
