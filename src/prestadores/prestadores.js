@@ -45,7 +45,8 @@ export const prestador = {
       if (!senhaCorreta) return null
 
       const dadosToken = {
-        iduser: prestador.idprestador
+        iduser: prestador.idprestador,
+        tipologin: 2
       }
 
       const token = createToken(dadosToken)

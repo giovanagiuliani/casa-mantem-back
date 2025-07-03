@@ -18,7 +18,8 @@ export function createToken (user) {
   // você pode adicionar mais informações ao payload
   /** @type {import('jsonwebtoken').JwtPayload} */
   const payload = {
-    sub: user.iduser
+    sub: user.iduser,
+    tipologin: user.tipologin
   }
 
   const token = sign(payload, secretKey, { expiresIn: '10h' })

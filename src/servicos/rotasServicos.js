@@ -96,7 +96,8 @@ router.post('/solicitarAgendamento', verifyToken, async (req, res) => {
 router.post('/buscaServicosAguardando', verifyToken, async (req, res) => {
   try {
     const dados = req.body
-    dados.idcliente = req.decodedToken.sub
+    dados.idbusca = req.decodedToken.sub
+    dados.tipologin = req.decodedToken.tipologin
     const retorno = await servico.buscaServicosAguardando(dados)
 
     res.status(200).json(retorno)
@@ -109,13 +110,52 @@ router.post('/buscaServicosAguardando', verifyToken, async (req, res) => {
 router.post('/cancelarSolicitacaoServico', verifyToken, async (req, res) => {
   try {
     const dados = req.body
-    dados.idcliente = req.decodedToken.sub
     const retorno = await servico.cancelarSolicitacaoServico(dados)
 
     res.status(200).json(retorno)
   } catch (error) {
     console.error('Erro ao cancelar solicitação de agendamento:', error)
     res.status(500).json({ message: 'Erro ao cancelar solicitação de agendamento.' })
+  }
+})
+
+router.post('/confirmarSolicitacaoServico', verifyToken, async (req, res) => {
+  try {
+    const dados = req.body
+    const retorno = await servico.confirmarSolicitacaoServico(dados)
+
+    res.status(200).json(retorno)
+  } catch (error) {
+    console.error('Erro ao confirmar solicitação de agendamento:', error)
+    res.status(500).json({ message: 'Erro ao confirmar solicitação de agendamento.' })
+  }
+})
+
+router.post('/buscaServicosRealizar', verifyToken, async (req, res) => {
+  try {
+    const dados = req.body
+    dados.idbusca = req.decodedToken.sub
+    dados.tipologin = req.decodedToken.tipologin
+    const retorno = await servico.buscaServicosRealizar(dados)
+
+    res.status(200).json(retorno)
+  } catch (error) {
+    console.error('Erro ao buscar serviços a serem realizados:', error)
+    res.status(500).json({ message: 'Erro ao buscar serviços a serem realizados.' })
+  }
+})
+
+router.post('/buscaServicosRealizados', verifyToken, async (req, res) => {
+  try {
+    const dados = req.body
+    dados.idbusca = req.decodedToken.sub
+    dados.tipologin = req.decodedToken.tipologin
+    const retorno = await servico.buscaServicosRealizados(dados)
+
+    res.status(200).json(retorno)
+  } catch (error) {
+    console.error('Erro ao buscar serviços a serem realizados:', error)
+    res.status(500).json({ message: 'Erro ao buscar serviços a serem realizados.' })
   }
 })
 

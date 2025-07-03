@@ -1,4 +1,12 @@
 import prisma from '../prismaClient.js'
+import dayjs from 'dayjs'
+import customParseFormat from 'dayjs/plugin/customParseFormat.js'
+import utc from 'dayjs/plugin/utc.js'
+import timezone from 'dayjs/plugin/timezone.js'
+dayjs().format()
+dayjs.extend(customParseFormat)
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
 export const servico = {
   async buscaListaServicos () {
@@ -136,20 +144,36 @@ export const servico = {
 
   async buscaServicosAguardando (dados) {
     try {
-      const retorno = await prisma.$queryRaw`
-      select t6.*, t3.nmprestador, t3.fotoprestador, t4.nmservico, t2.logradouro, t2.bairro, t2.numero, t2.complemento,
-      exists (
-        select 1 from favoritoscliente t10 
-        where t10.idprestador = t3.idprestador and t10.idcliente = ${dados.idcliente}
-      ) as favorito
-      from servicosagendados t6
-      inner join prestadores t3 on (t3.idprestador = t6.idprestador)
-      inner join servicosprestadores t5 on (t5.idprestador = t3.idprestador)
-      inner join servicos t4 on (t4.idservico = t5.idservico)
-      inner join enderecoscliente t2 on (t2.idcliente = ${dados.idcliente})
-      where t6.idcliente = ${dados.idcliente}
-      and t6.situacao = 1
-      `
+      let retorno
+
+      if (dados.tipologin === 1) {
+        retorno = await prisma.$queryRaw`
+        select t6.*, t3.nmprestador, t3.fotoprestador, t4.nmservico, t2.logradouro, t2.bairro, t2.numero, t2.complemento,
+        exists (
+          select 1 from favoritoscliente t10 
+          where t10.idprestador = t3.idprestador and t10.idcliente = ${dados.idbusca}
+        ) as favorito
+        from servicosagendados t6
+        inner join prestadores t3 on (t3.idprestador = t6.idprestador)
+        inner join servicosprestadores t5 on (t5.idprestador = t3.idprestador)
+        inner join servicos t4 on (t4.idservico = t5.idservico)
+        inner join enderecoscliente t2 on (t2.idcliente = ${dados.idbusca})
+        where t6.idcliente = ${dados.idbusca}
+        and t6.situacao = 1
+        `
+      }
+      if (dados.tipologin === 2) {
+        retorno = await prisma.$queryRaw`
+        select t6.*, t1.nmcliente, t1.fotocliente, t4.nmservico, t2.logradouro, t2.bairro, t2.numero, t2.complemento
+        from servicosagendados t6
+        inner join clientes t1 on (t1.idcliente = t6.idcliente)
+        inner join servicosprestadores t5 on (t5.idprestador = t6.idprestador)
+        inner join servicos t4 on (t4.idservico = t5.idservico)
+        inner join enderecoscliente t2 on (t2.idcliente = t1.idcliente)
+        where t6.idprestador = ${dados.idbusca}
+        and t6.situacao = 1
+        `
+      }
 
       return retorno
     } catch (error) {
@@ -173,6 +197,108 @@ export const servico = {
     } catch (error) {
       console.error('Erro ao cancelar solicitação de agendamento:', error)
       throw new Error('Erro ao cancelar solicitação de agendamento')
+    }
+  },
+
+  async confirmarSolicitacaoServico (dados) {
+    try {
+      const retorno = await prisma.servicosagendados.update({
+        where: {
+          idservicoagendado: dados.idservicoagendado
+        },
+        data: {
+          situacao: 2
+        }
+      })
+
+      return retorno
+    } catch (error) {
+      console.error('Erro ao cancelar solicitação de agendamento:', error)
+      throw new Error('Erro ao cancelar solicitação de agendamento')
+    }
+  },
+
+  async buscaServicosRealizar (dados) {
+    try {
+      let retorno
+
+      if (dados.tipologin === 1) {
+        retorno = await prisma.$queryRaw`
+        select t6.*, t3.nmprestador, t3.fotoprestador, t4.nmservico, t2.logradouro, t2.bairro, t2.numero, t2.complemento,
+        exists (
+          select 1 from favoritoscliente t10 
+          where t10.idprestador = t3.idprestador and t10.idcliente = ${dados.idbusca}
+        ) as favorito
+        from servicosagendados t6
+        inner join prestadores t3 on (t3.idprestador = t6.idprestador)
+        inner join servicosprestadores t5 on (t5.idprestador = t3.idprestador)
+        inner join servicos t4 on (t4.idservico = t5.idservico)
+        inner join enderecoscliente t2 on (t2.idcliente = ${dados.idbusca})
+        where t6.idcliente = ${dados.idbusca}
+        and t6.situacao = 2
+        and t6.dtprevisto >= CURRENT_DATE
+        `
+      }
+      if (dados.tipologin === 2) {
+        retorno = await prisma.$queryRaw`
+        select t6.*, t1.nmcliente, t1.fotocliente, t4.nmservico, t2.logradouro, t2.bairro, t2.numero, t2.complemento
+        from servicosagendados t6
+        inner join clientes t1 on (t1.idcliente = t6.idcliente)
+        inner join servicosprestadores t5 on (t5.idprestador = t6.idprestador)
+        inner join servicos t4 on (t4.idservico = t5.idservico)
+        inner join enderecoscliente t2 on (t2.idcliente = t1.idcliente)
+        where t6.idprestador = ${dados.idbusca}
+        and t6.situacao = 2
+        and t6.dtprevisto >= CURRENT_DATE
+        `
+      }
+
+      return retorno
+    } catch (error) {
+      console.error('Erro ao buscar serviços a serem realizados:', error)
+      throw new Error('Erro ao buscar serviços a serem realizados')
+    }
+  },
+
+  async buscaServicosRealizados (dados) {
+    try {
+      let retorno
+
+      if (dados.tipologin === 1) {
+        retorno = await prisma.$queryRaw`
+        select t6.*, t3.nmprestador, t3.fotoprestador, t4.nmservico, t2.logradouro, t2.bairro, t2.numero, t2.complemento,
+        exists (
+          select 1 from favoritoscliente t10 
+          where t10.idprestador = t3.idprestador and t10.idcliente = ${dados.idbusca}
+        ) as favorito
+        from servicosagendados t6
+        inner join prestadores t3 on (t3.idprestador = t6.idprestador)
+        inner join servicosprestadores t5 on (t5.idprestador = t3.idprestador)
+        inner join servicos t4 on (t4.idservico = t5.idservico)
+        inner join enderecoscliente t2 on (t2.idcliente = ${dados.idbusca})
+        where t6.idcliente = ${dados.idbusca}
+        and t6.situacao = 2
+        and t6.dtprevisto < CURRENT_DATE
+        `
+      }
+      if (dados.tipologin === 2) {
+        retorno = await prisma.$queryRaw`
+        select t6.*, t1.nmcliente, t1.fotocliente, t4.nmservico, t2.logradouro, t2.bairro, t2.numero, t2.complemento
+        from servicosagendados t6
+        inner join clientes t1 on (t1.idcliente = t6.idcliente)
+        inner join servicosprestadores t5 on (t5.idprestador = t6.idprestador)
+        inner join servicos t4 on (t4.idservico = t5.idservico)
+        inner join enderecoscliente t2 on (t2.idcliente = t1.idcliente)
+        where t6.idprestador = ${dados.idbusca}
+        and t6.situacao = 2
+        and t6.dtprevisto < CURRENT_DATE
+        `
+      }
+
+      return retorno
+    } catch (error) {
+      console.error('Erro ao buscar serviços a serem realizados:', error)
+      throw new Error('Erro ao buscar serviços a serem realizados')
     }
   }
 }

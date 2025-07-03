@@ -42,7 +42,8 @@ export const cliente = {
       if (!senhaCorreta) return null
 
       const dadosToken = {
-        iduser: cliente.idcliente
+        iduser: cliente.idcliente,
+        tipologin: 1
       }
 
       const token = createToken(dadosToken)
@@ -239,14 +240,18 @@ export const cliente = {
     try {
       const retorno = await prisma.$queryRaw`
       select t3.nmprestador, t3.celularprestador, t3.emailprestador, t3.fotoprestador, t3.cidadeprestador, t3.ufprestador, 
-      t3.whatsapp, t3.idprestador, t10.idcliente, t10.idfavoritocliente,
+      t3.whatsapp, t3.idprestador, t10.idcliente, t10.idfavoritocliente, json_agg(json_build_object('idservico', t4.idservico, 'nmservico', t4.nmservico)) AS servicos,
       exists (
         select 1 from favoritoscliente t10 
         where t10.idprestador = t3.idprestador and t10.idcliente = ${dados.idcliente}
       ) as favorito
       from favoritoscliente t10
       inner join prestadores t3 on (t3.idprestador = t10.idprestador)
+      inner join servicosprestadores t5 on (t5.idprestador = t3.idprestador)
+      inner join servicos t4 on (t5.idservico = t4.idservico)
       where t10.idcliente = ${dados.idcliente}
+      group by t3.nmprestador, t3.celularprestador, t3.emailprestador, t3.fotoprestador, t3.cidadeprestador, t3.ufprestador, 
+      t3.whatsapp, t3.idprestador, t10.idcliente, t10.idfavoritocliente
       `
 
       return retorno
